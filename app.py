@@ -18,28 +18,24 @@ uploaded_file = st.file_uploader(
 
 if uploaded_file:
     df_raw = pd.read_csv(uploaded_file, sep="\t", engine="python")
-    st.success("Fichier importé avec succès")
+    st.success(f"Fichier importé : {len(df_raw)} œil/yeux détecté(s)")
 
-    # Calcul
     df_prepared = preprocess_eye(df_raw)
-    result = predict_eye(df_prepared)
-    
-    st.subheader("Analyse des probabilités")
-    
-    # Affichage des résultats
-    dominant_class = result["prediction"]
-    all_probs = result["all_probs"]
+    results = predict_eye(df_prepared) # C'est maintenant une liste
 
-    for label, prob in all_probs.items():
-        # Si c'est la classe prédite, on met en gras et on ajoute une icône
-        if label == dominant_class:
-            st.markdown(f"**➡️ {label} : {prob*100:.1f}% (Le plus probable)**")
-        else:
-            st.write(f"{label} : {prob*100:.1f}%")
+    # Création d'onglets pour chaque œil
+    tabs = st.tabs([f"Œil {res['eye_index']}" for res in results])
 
-    # Rappel visuel
-    st.info(f"Interprétation suggérée : **{dominant_class}**")
+    for i, res in enumerate(results):
+        with tabs[i]:
+            dominant_class = res["prediction"]
+            all_probs = res["all_probs"]
 
-    st.warning(
-        "⚠️ Cet outil est une aide à la décision et ne remplace pas un examen clinique complet."
-    )
+            st.metric("Diagnostic suggéré", dominant_class)
+            
+            # Affichage des probabilités détaillées
+            for label, prob in all_probs.items():
+                if label == dominant_class:
+                    st.write(f"**➡️ {label} : {prob*100:.1f}%**")
+                else:
+                    st.write(f"{label} : {prob*100:.1f}%")
