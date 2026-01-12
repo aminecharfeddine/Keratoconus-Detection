@@ -1,8 +1,8 @@
 import joblib
 import numpy as np
 
-MODEL_STEP1 = "models/model_step1.pkl"
-MODEL_STEP2 = "models/model_step2.pkl"
+MODEL_STEP1 = "models/model_stage1.pkl"
+MODEL_STEP2 = "models/model_stage2.pkl"
 SCALER_PATH = "models/scaler.pkl"
 
 model_step1 = joblib.load(MODEL_STEP1)
