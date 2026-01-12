@@ -1,6 +1,10 @@
 import joblib
 
-# ... (chargement des modèles inchangé)
+PIPE_STEP1 = "models/model_stage1.pkl"
+PIPE_STEP2 = "models/model_stage2.pkl"
+
+pipe_step1 = joblib.load(PIPE_STEP1)
+pipe_step2 = joblib.load(PIPE_STEP2)
 
 def predict_eye(df_prepared):
     results_list = []
