@@ -6,22 +6,17 @@ PIPE_STEP2 = "models/model_stage2.pkl"
 pipe_step1 = joblib.load(PIPE_STEP1)
 pipe_step2 = joblib.load(PIPE_STEP2)
 
-def predict_eye(df_prepared):
+def predict_eye(df_prepared, labels=None):
     results_list = []
     
-    # On boucle sur chaque ligne (chaque œil) du DataFrame
     for i in range(len(df_prepared)):
-        # Extraction de la ligne i sous forme de DataFrame (pour garder les noms de colonnes)
         X = df_prepared.iloc[[i]]
         
-        # Étape 1 : Probabilité KC vs Normal
+        # Logique de prédiction (inchangée)
         p_kc_brut = pipe_step1.predict_proba(X)[0][1] 
         p_not_kc = 1 - p_kc_brut
-
-        # Étape 2 : Probabilité Fruste vs Normal
         p_fruste_dans_suspect = pipe_step2.predict_proba(X)[0][1]
 
-        # Calcul final
         prob_kc = p_kc_brut
         prob_fruste = p_not_kc * p_fruste_dans_suspect
         prob_normal = p_not_kc * (1 - p_fruste_dans_suspect)
@@ -34,8 +29,13 @@ def predict_eye(df_prepared):
 
         dominant_class = max(probs, key=probs.get)
         
+        # On détermine le nom de l'onglet
+        eye_name = labels[i] if labels is not None else f"Œil {i+1}"
+        if eye_name == "OD": eye_name = "Oculus Dexter (Œil Droit)"
+        if eye_name == "OS": eye_name = "Oculus Sinister (Œil Gauche)"
+
         results_list.append({
-            "eye_index": i + 1,
+            "eye_label": eye_name,
             "prediction": dominant_class,
             "all_probs": probs
         })
