@@ -31,8 +31,8 @@ def predict_eye(df_prepared, labels=None):
         
         # On détermine le nom de l'onglet
         eye_name = labels[i] if labels is not None else f"Œil {i+1}"
-        if eye_name == "OD": eye_name = "Oculus Dexter (Œil Droit)"
-        if eye_name == "OS": eye_name = "Oculus Sinister (Œil Gauche)"
+        if eye_name == "OD": eye_name = "Œil Droit"
+        if eye_name == "OS": eye_name = "Œil Gauche"
 
         results_list.append({
             "eye_label": eye_name,
